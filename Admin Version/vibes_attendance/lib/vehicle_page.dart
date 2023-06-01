@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gsheets/gsheets.dart';
 import 'attendance_list_page.dart';
 import 'attendance_page.dart';
+import 'vehicle_report.dart';
 
 
 const _credentials = r'''
@@ -362,14 +363,25 @@ Widget build(BuildContext context) {
           _fuelRefill3Controller.clear();
         });
       },
-                child: Text('Submit'),
-              ),
-            ],
-          ),
-          
-        ],
+        child: Text('Submit'),
+        ),
+      ],
+    ),
+    
+    ],
       ),
     ),
+    floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Perform the action for the Vehicle Report button here
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VehicleReport(credentials: _credentials, // Pass the credentials object
+        spreadsheetId: _spreadSheetId,)),
+          );
+        },
+        child: Icon(Icons.read_more),
+      ),
   );
 }
 }

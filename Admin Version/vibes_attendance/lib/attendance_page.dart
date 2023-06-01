@@ -170,7 +170,7 @@ Widget _buildDrawer() {
         ),
         ListTile(
           title: Text(
-            'Total Working Days',
+            'Working Days & Wage',
             style: optionTextStyle,
           ),
           onTap: () {

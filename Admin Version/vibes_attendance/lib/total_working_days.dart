@@ -14,6 +14,7 @@ class TotalWorkingDaysPage extends StatefulWidget {
 class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
   List<String> names = [];
   Map<String, int> personCrossCounts = {};
+  Map<String, String> personWage = {};
 
   @override
   void initState() {
@@ -36,6 +37,23 @@ class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
     for (final name in names) {
       personCrossCounts[name] = 0;
     }
+
+    // for (final name in names) {
+    //   personWage[name] = 0;
+    // }
+    int rowIndex = 1;
+    final row = rows[rowIndex];
+
+    for (int columnIndex = 1; columnIndex < row.length; columnIndex++) { // Exclude the first column
+        final name = names[columnIndex - 1];
+        final value = row[columnIndex];
+        print(name);
+        print(value);
+        // int? valueInt = int.tryParse(value);
+        // personWage[name] = value as int;
+        personWage[name] = value;
+        
+      }
 
     // Calculate the total number of crosses in each person's column
     for (int rowIndex = 1; rowIndex < rows.length; rowIndex++) {
@@ -64,11 +82,43 @@ class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
         itemBuilder: (context, index) {
           final name = names[index];
           final crossCount = personCrossCounts[name];
+          final wage = personWage[name];
+          final totalWage = crossCount! * int.parse(wage!);
 
-          return ListTile(
-            title: Text(name),
-            subtitle: Text('Total Present: ${crossCount ?? 0}'),
-          );
+          return Card(
+  elevation: 4, // Controls the shadow depth
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(8), // Rounds the corners
+  ),
+  child: ListTile(
+    leading: Text(
+      name,
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold, // Adds a bold font weight
+      ),
+    ),
+    title: Text(
+      'Total Present: ${crossCount ?? 0}',
+      style: TextStyle(
+        color: Colors.blue, // Changes the text color to blue
+      ),
+    ),
+    subtitle: Text(
+      'Wage : $wage',
+      style: TextStyle(
+        fontStyle: FontStyle.italic, // Adds an italic font style
+      ),
+    ),
+    trailing: Text(
+      'Total Wage : $totalWage',
+      style: TextStyle(
+        color: Colors.green, // Changes the text color to green
+      ),
+    ),
+  ),
+);
+
         },
       ),
     );
