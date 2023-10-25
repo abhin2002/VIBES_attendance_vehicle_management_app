@@ -24,12 +24,12 @@ const _credentials = r'''
 const _spreadSheetId = '1Z3pyd8D1YlFun-VRYPita556mJtDAy1TuKICjmTPI0g';
 
 
-class VehiclePage extends StatefulWidget {
+class VehicleSecondPage extends StatefulWidget {
   @override
-  State<VehiclePage> createState() => _VehiclePageState();
+  State<VehicleSecondPage> createState() => _VehicleSecondPageState();
 }
 
-class _VehiclePageState extends State<VehiclePage> {
+class _VehicleSecondPageState extends State<VehicleSecondPage> {
   final TextEditingController _vehicleNumberController = TextEditingController();
 
   final TextEditingController _endController = TextEditingController();
@@ -200,7 +200,7 @@ Future<void> writeToGoogleSheet4(BuildContext context) async {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: Text('  Vehicle 1'),
+      title: Text('  Vehicle 2'),
       automaticallyImplyLeading: true,
     ),
     body: Padding(

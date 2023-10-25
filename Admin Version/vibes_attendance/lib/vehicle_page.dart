@@ -3,6 +3,7 @@ import 'package:gsheets/gsheets.dart';
 import 'attendance_list_page.dart';
 import 'attendance_page.dart';
 import 'vehicle_report.dart';
+import 'package:flare_flutter/flare_actor.dart';
 
 
 const _credentials = r'''

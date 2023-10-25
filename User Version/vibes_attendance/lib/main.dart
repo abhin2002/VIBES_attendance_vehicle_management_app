@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vibes_attendance/home_page.dart'; // Import the HomePage widget
+import 'vehicle_home_page.dart';
 
 void main() {
   runApp(LoginApp());

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class TotalWorkingDaysPage extends StatefulWidget {
   final String credentials;
@@ -15,6 +17,9 @@ class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
   List<String> names = [];
   Map<String, int> personCrossCounts = {};
   Map<String, String> personWage = {};
+  String selectedMonth = '';
+  String selectedYear = '';
+
 
   @override
   void initState() {
@@ -22,7 +27,40 @@ class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
     fetchSheetData();
   }
 
-  Future<void> fetchSheetData() async {
+  void showDatePicker(BuildContext context) {
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        height: 200.0,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        child: CupertinoDatePicker(
+          mode: CupertinoDatePickerMode.date,
+          initialDateTime: DateTime.now(),
+          onDateTimeChanged: (DateTime dateTime) {
+            setState(() {
+              selectedMonth = dateTime.month.toString();
+              selectedYear = dateTime.year.toString();
+              monthAndYear(); // Call the function here
+            });
+          },
+        ),
+      );
+    },
+  );
+}
+
+
+  
+
+  Future<List<List<String>>> fetchSheetData() async {
+
+    print('Selected Month: $selectedMonth');
+    print('Selected Year: $selectedYear');
+    
     final gsheets = GSheets(widget.credentials);
     final spreadsheet = await gsheets.spreadsheet(widget.spreadsheetId);
 
@@ -47,8 +85,8 @@ class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
     for (int columnIndex = 1; columnIndex < row.length; columnIndex++) { // Exclude the first column
         final name = names[columnIndex - 1];
         final value = row[columnIndex];
-        print(name);
-        print(value);
+        // print(name);
+        // print(value);
         // int? valueInt = int.tryParse(value);
         // personWage[name] = value as int;
         personWage[name] = value;
@@ -58,6 +96,8 @@ class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
     // Calculate the total number of crosses in each person's column
     for (int rowIndex = 1; rowIndex < rows.length; rowIndex++) {
       final row = rows[rowIndex];
+      // 
+      
       for (int columnIndex = 1; columnIndex < row.length; columnIndex++) { // Exclude the first column
         final name = names[columnIndex - 1];
         final value = row[columnIndex];
@@ -69,14 +109,79 @@ class _TotalWorkingDaysPageState extends State<TotalWorkingDaysPage> {
 
     // Update the UI
     setState(() {});
+
+    return rows;
   }
+
+Future<void> monthAndYear() async {
+  print('Selected Month: $selectedMonth');
+  print('Selected Year: $selectedYear');
+  final googleSheetsReferenceDate = DateTime(1899, 12, 30);
+  final data = await fetchSheetData();
+  if (data != null && data.length >= 3) {
+    int? firstMatchingRow;
+    int? lastMatchingRow;
+
+    for (int rowIndex = 2; rowIndex < data.length; rowIndex++) {
+      final intValue = int.tryParse(data[rowIndex][0]);
+      if (intValue != null) {
+        final date = googleSheetsReferenceDate.add(Duration(days: intValue));
+        final month = date.month.toString();
+        final year = date.year.toString();
+        if (month == selectedMonth && year == selectedYear) {
+          firstMatchingRow ??= rowIndex;
+          lastMatchingRow = rowIndex;
+        }
+      }
+    }
+
+    for (final name in names) {
+      personCrossCounts[name] = 0;
+      // print(name);
+    }
+
+    for (int? rowIndex = firstMatchingRow; rowIndex! < lastMatchingRow!+1; rowIndex++) {
+      final row = data[rowIndex];
+      // 
+      
+      for (int columnIndex = 1; columnIndex < row.length; columnIndex++) { // Exclude the first column
+        final name = names[columnIndex - 1];
+        final value = row[columnIndex];
+        if (value != null && value == '✕') {
+          personCrossCounts[name] = personCrossCounts[name]! + 1;
+        }
+      }
+    }
+
+
+
+
+    print('First matching row: $firstMatchingRow');
+    print('Last matching row: $lastMatchingRow');
+
+    // Update the UI with the updated data
+    setState(() {});
+  }
+}
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Total Working Days'),
-      ),
+  title: Text('Total Working Days & Wage'),
+  actions: [
+    IconButton(
+      icon: Icon(Icons.calendar_today),
+      onPressed: () => showDatePicker(context),
+    ),
+  ],
+),
+
+
       body: ListView.builder(
         itemCount: names.length,
         itemBuilder: (context, index) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vibes_attendance/attendance_page.dart'; // Import the AttendancePage widget
 import 'package:vibes_attendance/vehicle_page.dart'; // Import the VehiclePage widget
-
+import 'package:vibes_attendance/vehicle_home_page.dart'; // Import the VehicleHomePage widget
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,9 +17,18 @@ class _HomePageState extends State<HomePage> {
   ];
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    if (index == 1) {
+      // If "Vehicle" tab is tapped (index 1), navigate to the VehicleHomePage
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => VehicleHome()),
+      );
+    } else {
+      // For other tabs, just update the current index to switch the page
+      setState(() {
+        _currentIndex = index;
+      });
+    }
   }
 
   @override
